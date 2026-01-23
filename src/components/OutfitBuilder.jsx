@@ -1,8 +1,142 @@
 import { useState, useEffect, useRef } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Trash2 } from 'lucide-react';
 import html2canvas from 'html2canvas';
+import { DndContext, useDraggable, useDroppable } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
 import { saveOutfit } from '../utils/localStorage';
 import { OCCASIONS, SEASONS } from '../utils/constants';
+
+// Draggable sidebar item component
+function SidebarItem({ item }) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: `sidebar-${item.id}`,
+  });
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
+      className="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded p-2 cursor-move hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors touch-none"
+    >
+      <div className="flex items-center gap-2">
+        <div className="w-12 h-12 bg-gray-200 dark:bg-gray-600 rounded overflow-hidden shrink-0">
+          {item.thumbnail ? (
+            <img
+              src={item.thumbnail}
+              alt={item.title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-xs">
+              📦
+            </div>
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-medium text-gray-900 dark:text-white truncate">
+            {item.title || item.brand || 'Untitled'}
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+            {item.category}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Draggable canvas item component
+function CanvasItem({ canvasItem, index, onRemove }) {
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: `canvas-${index}`,
+  });
+
+  const style = {
+    position: 'absolute',
+    left: `${canvasItem.x}px`,
+    top: `${canvasItem.y}px`,
+    zIndex: canvasItem.z,
+    transform: CSS.Translate.toString(transform),
+    opacity: isDragging ? 0.8 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...listeners}
+      {...attributes}
+      className="cursor-move group touch-none"
+    >
+      <div className="relative">
+        <div className="w-24 h-24 bg-white dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden shadow-lg group-hover:border-indigo-500 dark:group-hover:border-indigo-400 transition-colors">
+          {canvasItem.item.thumbnail ? (
+            <img
+              src={canvasItem.item.thumbnail}
+              alt={canvasItem.item.title}
+              className="w-full h-full object-cover pointer-events-none"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-2xl">
+              📦
+            </div>
+          )}
+        </div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            onRemove(index);
+          }}
+          onPointerDown={(e) => e.stopPropagation()}
+          className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white rounded-full w-7 h-7 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Droppable canvas component
+function Canvas({ canvasRef, canvasItems, onRemove }) {
+  const { setNodeRef } = useDroppable({
+    id: 'canvas',
+  });
+
+  return (
+    <div
+      ref={(node) => {
+        setNodeRef(node);
+        canvasRef.current = node;
+      }}
+      className="bg-white dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg relative overflow-hidden"
+      style={{ height: '60%' }}
+    >
+      {canvasItems.length === 0 && (
+        <div className="absolute inset-0 flex items-center justify-center text-gray-400 dark:text-gray-500">
+          Drag items from the sidebar onto this canvas
+        </div>
+      )}
+
+      {canvasItems.map((canvasItem, index) => (
+        <CanvasItem
+          key={index}
+          canvasItem={canvasItem}
+          index={index}
+          onRemove={onRemove}
+        />
+      ))}
+    </div>
+  );
+}
 
 export default function OutfitBuilder({ items, editOutfit, onSave, onCancel }) {
   const [selectedItems, setSelectedItems] = useState([]);
@@ -13,7 +147,7 @@ export default function OutfitBuilder({ items, editOutfit, onSave, onCancel }) {
   const [season, setSeason] = useState('');
   const [manualThumbnail, setManualThumbnail] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [draggedItem, setDraggedItem] = useState(null);
+  const [activeId, setActiveId] = useState(null);
   const canvasRef = useRef(null);
 
   // Load edit data
@@ -50,67 +184,58 @@ export default function OutfitBuilder({ items, editOutfit, onSave, onCancel }) {
     item.category?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleDragStart = (e, item) => {
-    setDraggedItem(item);
-    e.dataTransfer.effectAllowed = 'copy';
+  const handleDragStart = (event) => {
+    setActiveId(event.active.id);
   };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
-  };
+  const handleDragEnd = (event) => {
+    const { active, delta, over } = event;
+    setActiveId(null);
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    if (!draggedItem) return;
+    if (!over || over.id !== 'canvas') return;
 
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    const id = active.id;
 
-    // Check if item is already on canvas
-    if (!canvasItems.find(ci => ci.item.id === draggedItem.id)) {
-      setCanvasItems([
-        ...canvasItems,
-        {
-          item: draggedItem,
-          x: Math.max(0, Math.min(x - 50, rect.width - 100)),
-          y: Math.max(0, Math.min(y - 50, rect.height - 100)),
-          z: canvasItems.length,
-        },
-      ]);
+    // Check if it's a sidebar item (string starts with 'sidebar-')
+    if (typeof id === 'string' && id.startsWith('sidebar-')) {
+      const itemId = id.replace('sidebar-', '');
+      const item = items.find(i => i.id === itemId);
+      
+      if (!item) return;
+      
+      // Check if item is already on canvas
+      if (!canvasItems.find(ci => ci.item.id === item.id)) {
+        const canvas = canvasRef.current;
+        const rect = canvas.getBoundingClientRect();
+        
+        setCanvasItems([
+          ...canvasItems,
+          {
+            item,
+            x: Math.max(0, Math.min(event.activatorEvent.clientX - rect.left - 50, rect.width - 100)),
+            y: Math.max(0, Math.min(event.activatorEvent.clientY - rect.top - 50, rect.height - 100)),
+            z: canvasItems.length,
+          },
+        ]);
+      }
+    } else if (typeof id === 'string' && id.startsWith('canvas-')) {
+      // It's a canvas item being repositioned
+      const canvasIndex = parseInt(id.replace('canvas-', ''));
+      
+      if (!isNaN(canvasIndex) && canvasIndex >= 0 && canvasIndex < canvasItems.length) {
+        setCanvasItems(prev =>
+          prev.map((item, index) =>
+            index === canvasIndex
+              ? {
+                  ...item,
+                  x: Math.max(0, item.x + delta.x),
+                  y: Math.max(0, item.y + delta.y),
+                }
+              : item
+          )
+        );
+      }
     }
-
-    setDraggedItem(null);
-  };
-
-  const handleCanvasItemDragStart = (e, index) => {
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('canvasIndex', index.toString());
-  };
-
-  const handleCanvasItemDrop = (e) => {
-    e.preventDefault();
-    const canvasIndex = parseInt(e.dataTransfer.getData('canvasIndex'));
-    if (isNaN(canvasIndex)) return;
-
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    setCanvasItems(prev =>
-      prev.map((item, index) =>
-        index === canvasIndex
-          ? {
-              ...item,
-              x: Math.max(0, Math.min(x - 50, rect.width - 100)),
-              y: Math.max(0, Math.min(y - 50, rect.height - 100)),
-            }
-          : item
-      )
-    );
   };
 
   const handleRemoveFromCanvas = (index) => {
@@ -169,122 +294,50 @@ export default function OutfitBuilder({ items, editOutfit, onSave, onCancel }) {
   };
 
   return (
-    <div className="h-[calc(100vh-8rem)]">
-      <div className="mb-4 flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          {editOutfit ? 'Edit Outfit' : 'Create Outfit'}
-        </h1>
-        <button
-          onClick={onCancel}
-          className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
-        >
-          ✕ Close
-        </button>
-      </div>
-
-      <div className="grid grid-cols-4 gap-6 h-full">
-        {/* Sidebar - Items List */}
-        <div className="col-span-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 overflow-y-auto">
-          <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Items</h3>
-          
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search items..."
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md mb-3 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent"
-          />
-
-          <div className="space-y-2">
-            {filteredItems.map((item) => (
-              <div
-                key={item.id}
-                draggable
-                onDragStart={(e) => handleDragStart(e, item)}
-                className="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded p-2 cursor-move hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="w-12 h-12 bg-gray-200 dark:bg-gray-600 rounded overflow-hidden shrink-0">
-                    {item.thumbnail ? (
-                      <img
-                        src={item.thumbnail}
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-xs">
-                        📦
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-gray-900 dark:text-white truncate">
-                      {item.title || item.brand || 'Untitled'}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                      {item.category}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <div className="h-[calc(100vh-8rem)]">
+        <div className="mb-4 flex justify-between items-center">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            {editOutfit ? 'Edit Outfit' : 'Create Outfit'}
+          </h1>
+          <button
+            onClick={onCancel}
+            className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+          >
+            ✕ Close
+          </button>
         </div>
 
-        {/* Canvas */}
-        <div className="col-span-3 space-y-4">
-          <div
-            ref={canvasRef}
-            onDragOver={handleDragOver}
-            onDrop={canvasItems.some(ci => ci.item === draggedItem) ? handleCanvasItemDrop : handleDrop}
-            className="bg-white dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg relative overflow-hidden"
-            style={{ height: '60%', backgroundImage: 'radial-gradient(circle, #e5e7eb 1px, transparent 1px)', backgroundSize: '20px 20px' }}
-          >
-            {canvasItems.length === 0 && (
-              <div className="absolute inset-0 flex items-center justify-center text-gray-400 dark:text-gray-500">
-                Drag items from the sidebar onto this canvas
-              </div>
-            )}
+        <div className="grid grid-cols-4 gap-6 h-full">
+          {/* Sidebar - Items List */}
+          <div className="col-span-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 overflow-y-auto">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Items</h3>
+            
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search items..."
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md mb-3 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent"
+            />
 
-            {canvasItems.map((canvasItem, index) => (
-              <div
-                key={index}
-                draggable
-                onDragStart={(e) => handleCanvasItemDragStart(e, index)}
-                className="absolute cursor-move group"
-                style={{
-                  left: `${canvasItem.x}px`,
-                  top: `${canvasItem.y}px`,
-                  zIndex: canvasItem.z,
-                }}
-              >
-                <div className="relative">
-                  <div className="w-24 h-24 bg-white dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden shadow-lg group-hover:border-indigo-500 dark:group-hover:border-indigo-400 transition-colors">
-                    {canvasItem.item.thumbnail ? (
-                      <img
-                        src={canvasItem.item.thumbnail}
-                        alt={canvasItem.item.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-2xl">
-                        📦
-                      </div>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => handleRemoveFromCanvas(index)}
-                    className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    ✕
-                  </button>
-                </div>
-              </div>
-            ))}
+            <div className="space-y-2">
+              {filteredItems.map((item) => (
+                <SidebarItem key={item.id} item={item} />
+              ))}
+            </div>
           </div>
 
-          {/* Outfit Details Form */}
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          {/* Canvas */}
+          <div className="col-span-3 space-y-4">
+            <Canvas
+              canvasRef={canvasRef}
+              canvasItems={canvasItems}
+              onRemove={handleRemoveFromCanvas}
+            />
+
+            {/* Outfit Details Form */}
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
             <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Outfit Details</h3>
             
             <div className="grid grid-cols-2 gap-4">
@@ -398,5 +451,6 @@ export default function OutfitBuilder({ items, editOutfit, onSave, onCancel }) {
         </div>
       </div>
     </div>
+  </DndContext>
   );
 }
