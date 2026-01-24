@@ -1,5 +1,5 @@
-import { Link, useParams, useNavigate } from 'react-router-dom';
-import { CATEGORIES, SUBCATEGORIES } from '../utils/constants';
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { CATEGORIES, SUBCATEGORIES } from "../utils/constants";
 
 // CategoryCard Component
 function CategoryCard({ name, imageUrl, linkTo }) {
@@ -27,16 +27,19 @@ function CategoryCard({ name, imageUrl, linkTo }) {
 export default function Category() {
   const { category } = useParams();
   const navigate = useNavigate();
-  
+
   const subcategories = SUBCATEGORIES[category] || [];
-  
-  if (!CATEGORIES[category.toUpperCase().replace(/\s/g, '_')]) {
+
+  if (!CATEGORIES[category.toUpperCase().replace(/\s/g, "_")]) {
     return (
       <div className="text-center py-12">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
           Category not found
         </h2>
-        <Link to="/" className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300">
+        <Link
+          to="/"
+          className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
+        >
           Go back to home
         </Link>
       </div>
@@ -52,8 +55,12 @@ export default function Category() {
         >
           <span className="mr-2 text-xl">←</span> Back
         </button>
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">{category}</h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400">Select a subcategory to browse items</p>
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">
+          {category}
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-400">
+          Select a subcategory to browse products
+        </p>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8">

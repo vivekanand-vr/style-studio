@@ -1,12 +1,13 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout';
-import Home from './pages/Home';
-import Category from './pages/Category';
-import Items from './pages/Items';
-import ItemDetail from './pages/ItemDetail';
-import Favorites from './pages/Favorites';
-import Outfits from './pages/Outfits';
-import OutfitDetail from './pages/OutfitDetail';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import Home from "./pages/Home";
+import Category from "./pages/Category";
+import Items from "./pages/Items";
+import ItemDetail from "./pages/ItemDetail";
+import Favorites from "./pages/Favorites";
+import Outfits from "./pages/Outfits";
+import OutfitDetail from "./pages/OutfitDetail";
+import OutfitEditor from "./pages/OutfitEditor";
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
           <Route path="items/:id" element={<ItemDetail />} />
           <Route path="favorites" element={<Favorites />} />
           <Route path="outfits" element={<Outfits />} />
+          <Route path="outfits/new" element={<OutfitEditor />} />
+          <Route path="outfits/edit/:id" element={<OutfitEditor />} />
           <Route path="outfits/:id" element={<OutfitDetail />} />
         </Route>
       </Routes>

@@ -1,70 +1,81 @@
-import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
-import { saveItem } from '../utils/localStorage';
-import { CATEGORIES, SUBCATEGORIES, TYPES, CURRENCIES } from '../utils/constants';
-import { fetchProductDetails, isProductUrl } from '../utils/productParser';
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { saveItem } from "../../utils/localStorage";
+import {
+  CATEGORIES,
+  SUBCATEGORIES,
+  TYPES,
+  CURRENCIES,
+} from "../../utils/constants";
+import { fetchProductDetails, isProductUrl } from "../../utils/productParser";
 
-export default function AddItemModal({ onClose, onItemAdded, initialCategory, initialSubcategory, editItem }) {
-  const [formData, setFormData] = useState(editItem || {
-    title: '',
-    description: '',
-    brand: '',
-    category: initialCategory || '',
-    subcategory: initialSubcategory || '',
-    type: '',
-    color: '',
-    size: '',
-    currency: CURRENCIES.INR,
-    price: '',
-    sourceLink: '',
-    image: '',
-    notes: '',
-  });
-
-
+export default function AddItemModal({
+  onClose,
+  onItemAdded,
+  initialCategory,
+  initialSubcategory,
+  editItem,
+}) {
+  const [formData, setFormData] = useState(
+    editItem || {
+      title: "",
+      description: "",
+      brand: "",
+      category: initialCategory || "",
+      subcategory: initialSubcategory || "",
+      type: "",
+      color: "",
+      size: "",
+      currency: CURRENCIES.INR,
+      price: "",
+      sourceLink: "",
+      image: "",
+      notes: "",
+    },
+  );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-      ...(name === 'category' && { subcategory: '' }), // Reset subcategory when category changes
+      ...(name === "category" && { subcategory: "" }), // Reset subcategory when category changes
     }));
-    
+
     // // Clear fetch error when link changes
     // if (name === 'sourceLink') {
     //   setFetchError('');
     // }
   };
 
-// Fetch product details from URL (Disabled for now)
-//   const handleFetchDetails = async () => {
-//     if (!formData.sourceLink || !isProductUrl(formData.sourceLink)) {
-//       setFetchError('Please enter a valid product URL');
-//       return;
-//     }
+  // Fetch product details from URL (Disabled for now)
+  //   const handleFetchDetails = async () => {
+  //     if (!formData.sourceLink || !isProductUrl(formData.sourceLink)) {
+  //       setFetchError('Please enter a valid product URL');
+  //       return;
+  //     }
 
-//     setIsFetching(true);
-//     setFetchError('');
-    
-//     const result = await fetchProductDetails(formData.sourceLink);
-//     setIsFetching(false);
+  //     setIsFetching(true);
+  //     setFetchError('');
 
-//     if (result.success) {
-//       setFormData((prev) => ({
-//         ...prev,
-//         title: prev.title || result.data.title,
-//         description: prev.description || result.data.description,
-//         brand: prev.brand || result.data.brand,
-//         price: prev.price || result.data.price || '',
-//         images: result.data.image && !prev.images.includes(result.data.image) 
-//           ? [...prev.images, result.data.image] 
-//           : prev.images,
-//       }));
-//     } else {
-//       setFetchError(result.error || 'Could not fetch details. Please fill manually.');
-//     }
-//   };
+  //     const result = await fetchProductDetails(formData.sourceLink);
+  //     setIsFetching(false);
+
+  //     if (result.success) {
+  //       setFormData((prev) => ({
+  //         ...prev,
+  //         title: prev.title || result.data.title,
+  //         description: prev.description || result.data.description,
+  //         brand: prev.brand || result.data.brand,
+  //         price: prev.price || result.data.price || '',
+  //         images: result.data.image && !prev.images.includes(result.data.image)
+  //           ? [...prev.images, result.data.image]
+  //           : prev.images,
+  //       }));
+  //     } else {
+  //       setFetchError(result.error || 'Could not fetch details. Please fill manually.');
+  //     }
+  //   };
 
   const handleAddImage = () => {
     if (imageInput.trim()) {
@@ -72,7 +83,7 @@ export default function AddItemModal({ onClose, onItemAdded, initialCategory, in
         ...prev,
         images: [...prev.images, imageInput.trim()],
       }));
-      setImageInput('');
+      setImageInput("");
     }
   };
 
@@ -85,13 +96,13 @@ export default function AddItemModal({ onClose, onItemAdded, initialCategory, in
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Extract domain from source link
-    let sourceDomain = '';
+    let sourceDomain = "";
     if (formData.sourceLink) {
       try {
         const url = new URL(formData.sourceLink);
-        sourceDomain = url.hostname.replace('www.', '');
+        sourceDomain = url.hostname.replace("www.", "");
       } catch (e) {
         // Invalid URL, ignore
       }
@@ -101,21 +112,25 @@ export default function AddItemModal({ onClose, onItemAdded, initialCategory, in
       ...formData,
       price: formData.price ? Number(formData.price) : null,
       sourceDomain,
-      thumbnail: formData.image || '',
+      thumbnail: formData.image || "",
     };
 
     saveItem(itemData);
     onItemAdded();
   };
 
-  const availableSubcategories = formData.category ? SUBCATEGORIES[formData.category] || [] : [];
+  const availableSubcategories = formData.category
+    ? SUBCATEGORIES[formData.category] || []
+    : [];
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{editItem ? 'Edit Item' : 'Add New Item'}</h2>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              {editItem ? "Edit Product" : "Add New Product"}
+            </h2>
             <button
               onClick={onClose}
               className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl"
@@ -334,7 +349,7 @@ export default function AddItemModal({ onClose, onItemAdded, initialCategory, in
                   alt="Preview"
                   className="w-32 h-32 object-cover rounded border border-gray-200 dark:border-gray-700"
                   onError={(e) => {
-                    e.target.style.display = 'none';
+                    e.target.style.display = "none";
                   }}
                 />
               </div>
@@ -369,7 +384,7 @@ export default function AddItemModal({ onClose, onItemAdded, initialCategory, in
               type="submit"
               className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white rounded-lg transition-colors"
             >
-              {editItem ? 'Update Item' : 'Save Item'}
+              {editItem ? "Update Product" : "Save Product"}
             </button>
           </div>
         </form>
