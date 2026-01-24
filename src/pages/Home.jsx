@@ -1,16 +1,9 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  ArrowRight,
-  Plus,
-  Heart,
-  ShoppingBag,
-  Sparkles,
-  Tag,
-} from "lucide-react";
+import { ArrowRight, Heart, ShoppingBag, Sparkles, Tag } from "lucide-react";
 import { getFavoriteItems, getItems, getOutfits } from "../utils/localStorage";
-import { categoriesData as categories } from "../utils/constants";
+import { CATEGORIES_DATA, DASHBOARD_STATS } from "../utils/constants";
 import CategoryCard from "../components/cards/CategoryCard";
 import StatCard from "../components/cards/StatCard";
 import PageHeader from "../components/PageHeader";
@@ -41,6 +34,13 @@ export default function Home() {
     });
   }, []);
 
+  const statIcons = {
+    ShoppingBag,
+    Heart,
+    Sparkles,
+    Tag,
+  };
+
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       {/* Hero Section */}
@@ -54,49 +54,28 @@ export default function Home() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="flex gap-3 sm:gap-5 w-full"
+        className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-5 w-full"
       >
-        {[
-          {
-            icon: ShoppingBag,
-            label: "Total Products",
-            value: stats.items,
-            color: "bg-blue-50 dark:bg-gray-800",
-          },
-          {
-            icon: Heart,
-            label: "Favorites",
-            value: stats.favorites,
-            color: "bg-pink-50 dark:bg-gray-800",
-          },
-          {
-            icon: Sparkles,
-            label: "Outfits Created",
-            value: stats.outfits,
-            color: "bg-purple-50 dark:bg-gray-800",
-          },
-          {
-            icon: Tag,
-            label: "Brands",
-            value: stats.brands,
-            color: "bg-amber-50 dark:bg-gray-800",
-          },
-        ].map((stat, index) => (
-          <motion.div
-            key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 + index * 0.1 }}
-            className="flex-1"
-          >
-            <StatCard
-              icon={stat.icon}
-              label={stat.label}
-              value={stat.value}
-              color={stat.color}
-            />
-          </motion.div>
-        ))}
+        {DASHBOARD_STATS.map((stat, index) => {
+          const Icon = statIcons[stat.icon];
+          return (
+            <motion.div
+              key={stat.key}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 + index * 0.1 }}
+              className="w-full"
+            >
+              <StatCard
+                icon={Icon}
+                label={stat.label}
+                value={stats[stat.key]}
+                color={stat.color}
+                accent={stat.accent}
+              />
+            </motion.div>
+          );
+        })}
       </motion.div>
 
       {/* Categories Section */}
@@ -117,7 +96,7 @@ export default function Home() {
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
-          {categories.map((category) => (
+          {CATEGORIES_DATA.map((category) => (
             <CategoryCard
               key={category.name}
               name={category.name}

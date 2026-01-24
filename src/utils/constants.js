@@ -7,7 +7,7 @@ export const CATEGORIES = {
   ACCESSORIES: "Accessories",
 };
 
-export const categoriesData = [
+export const CATEGORIES_DATA = [
   {
     name: CATEGORIES.TOPWEAR,
     description: "Shirts, T-Shirts, Jackets & More",
@@ -229,3 +229,39 @@ export const CURRENCIES = {
   USD: "USD",
   EUR: "EUR",
 };
+
+// Dashboard stat card configuration
+export const DASHBOARD_STATS = [
+  {
+    key: "items",
+    label: "Total Products",
+    icon: "ShoppingBag",
+    color:
+      "bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-gray-800 dark:to-gray-900",
+    accent: "text-indigo-600 dark:text-indigo-300",
+  },
+  {
+    key: "favorites",
+    label: "Favorites",
+    icon: "Heart",
+    color:
+      "bg-gradient-to-br from-pink-50 to-rose-100 dark:from-gray-800 dark:to-gray-900",
+    accent: "text-rose-600 dark:text-rose-300",
+  },
+  {
+    key: "outfits",
+    label: "Outfits Created",
+    icon: "Sparkles",
+    color:
+      "bg-gradient-to-br from-purple-50 to-violet-100 dark:from-gray-800 dark:to-gray-900",
+    accent: "text-violet-600 dark:text-violet-300",
+  },
+  {
+    key: "brands",
+    label: "Brands",
+    icon: "Tag",
+    color:
+      "bg-gradient-to-br from-amber-50 to-amber-100 dark:from-gray-800 dark:to-gray-900",
+    accent: "text-amber-600 dark:text-amber-300",
+  },
+];

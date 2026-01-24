@@ -1,26 +1,26 @@
 import { motion } from "framer-motion";
 
-export default function StatCard({ icon: Icon, label, value, color }) {
+export default function StatCard({ icon: Icon, label, value, color, accent }) {
+  const accentColor = accent || "text-indigo-600 dark:text-indigo-300";
+
   return (
     <motion.div
-      whileHover={{ y: -4, scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 250, damping: 16 }}
-      className={`${color} border border-gray-200 dark:border-gray-700 rounded-lg sm:rounded-xl px-2.5 py-2 sm:p-5 w-full inline-flex items-center sm:items-start gap-2 sm:gap-3 shadow-sm`}
+      whileHover={{ y: -3, scale: 1.01 }}
+      transition={{ type: "spring", stiffness: 240, damping: 18 }}
+      className={`${color} border border-gray-200/80 dark:border-gray-700/70 rounded-xl sm:rounded-2xl p-3 sm:p-5 w-full shadow-sm flex items-center justify-between gap-3 sm:gap-4`}
     >
-      <div className="p-2 sm:p-3 bg-white dark:bg-gray-700 rounded-full shrink-0">
-        <Icon
-          size={18}
-          className="sm:w-6 sm:h-6 text-gray-700 dark:text-gray-300"
-        />
-      </div>
-      <div className="flex flex-col gap-1">
-        <p className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-800 dark:text-gray-200 leading-tight">
-          {value}
-        </p>
-        <p className="hidden sm:block text-sm text-gray-600 dark:text-gray-400 font-medium leading-tight">
+      <div className="flex items-center gap-3 sm:gap-4">
+        <div className="p-2.5 sm:p-3 rounded-xl bg-white/90 dark:bg-gray-800/80 border border-white/70 dark:border-gray-700/70 shadow-sm">
+          <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${accentColor}`} />
+        </div>
+        <span className="text-sm sm:text-base font-semibold text-gray-900 dark:text-gray-100">
           {label}
-        </p>
+        </span>
       </div>
+
+      <p className="text-xl sm:text-3xl font-bold text-gray-900 dark:text-white leading-none">
+        {value}
+      </p>
     </motion.div>
   );
 }
