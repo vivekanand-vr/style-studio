@@ -26,18 +26,23 @@ A modern, intuitive web application for managing your wardrobe wishlist and crea
 - **Flexible Types**: Multiple item types within each subcategory
 
 ### Outfit Builder
-- **Visual Canvas**: Drag-and-drop interface for creating outfit combinations
+- **Visual Canvas**: Advanced drag-and-drop interface powered by @dnd-kit for smooth repositioning
 - **Mix & Match**: Combine items from different categories to visualize complete looks
-- **Save Outfits**: Store your favorite combinations for future reference
+- **Flexible Positioning**: Freely drag items around the canvas to perfect your outfit layout
+- **Edit Existing Outfits**: Modify saved outfits by repositioning or removing items
+- **Save Outfits**: Store your favorite combinations with auto-generated thumbnails
 - **Outfit Gallery**: Browse all saved outfits with clickable cards
-- **Outfit Details**: View full outfit layout with positioned items
+- **Outfit Details**: View full outfit layout with positioned items on canvas
+- **Canvas Customization**: Optional manual thumbnail upload for outfit covers
 
 ### User Experience
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
-- **Clean Interface**: Modern UI with Tailwind CSS v4 styling
+- **Clean Interface**: Modern UI with Tailwind CSS v4 styling and custom dropdown icons
 - **Fast Navigation**: React Router-based routing for instant page transitions
 - **Local Storage**: All data persisted locally (no account required)
 - **Image Previews**: Visual thumbnails for all items and outfits
+- **Touch Support**: Full touch device compatibility with @dnd-kit integration
+- **Dark Mode Ready**: Interface prepared for theme switching
 
 ## Technology Stack
 
@@ -46,7 +51,9 @@ A modern, intuitive web application for managing your wardrobe wishlist and crea
 - **Routing**: React Router DOM v7
 - **State Management**: React Hooks (useState, useEffect)
 - **Data Storage**: Browser localStorage (Firebase integration planned)
-- **Drag & Drop**: Native HTML5 Drag and Drop API
+- **Drag & Drop**: @dnd-kit/core for smooth drag-and-drop interactions
+- **Icons**: Lucide React for modern, customizable icons
+- **Canvas Capture**: html2canvas for generating outfit thumbnails
 
 ## Project Structure
 
@@ -224,15 +231,80 @@ Use the filter controls on the Items page:
 
 ## Future Enhancements
 
+### High Priority
+- **Live Price Tracking**: Automatically fetch and update prices from product URLs
+- **Image Auto-Fetch**: Extract product images directly from source links
+- **Product Link Integration**: Keep product details synced with retailer websites
+- **Price History**: Track price changes over time with historical graphs
+- **Price Drop Alerts**: Notifications when wishlisted items go on sale
+- **Multi-Currency Support**: Automatic currency conversion with live exchange rates
+
+### Smart Features
+- **AI Outfit Suggestions**: Machine learning-based recommendations using existing items
+- **Color Matching**: Suggest complementary colors based on color theory
+- **Seasonal Recommendations**: Auto-suggest items based on current season and weather
+- **Style Analysis**: Get insights on your wardrobe style preferences
+- **Duplicate Detection**: Identify similar items to avoid redundant purchases
+- **Budget Tracking**: Set monthly budgets and spending limits with analytics
+
+### Social & Sharing
+- **Social Sharing**: Share outfits on social media platforms
+- **Collaborative Wardrobes**: Share wardrobes with friends/family for gift ideas
+- **Community Gallery**: Browse public outfits from other users for inspiration
+- **Style Polls**: Get feedback from friends on outfit combinations
+- **Influencer Mode**: Public profile with follower system
+
+### Advanced Organization
+- **Custom Tags**: Create unlimited custom tags beyond occasions/seasons
+- **Smart Collections**: Auto-generated collections (e.g., "Under $50", "Recently Added")
+- **Capsule Wardrobes**: Create minimalist wardrobes with essential items
+- **Packing Lists**: Generate travel packing lists from outfits
+- **Laundry Schedule**: Track when items need washing/dry cleaning
+- **Size Management**: Store multiple sizes and track fit preferences
+
+### Shopping Features
+- **Wishlist Priority**: Rank items by purchase priority
+- **Similar Items Finder**: Find alternative products at different price points
+- **Store Locator**: Find nearby stores that carry wishlisted items
+- **Deal Aggregator**: Compare prices across multiple retailers
+- **Cashback Integration**: Track cashback and rewards from purchases
+- **Shopping Cart Export**: Export wishlist to retailer shopping carts
+
+### Analytics & Insights
+- **Wardrobe Statistics**: Cost per wear, total investment, brand breakdown
+- **Wear Frequency**: Track how often you wear each outfit
+- **ROI Calculator**: Calculate cost per wear for purchased items
+- **Style Evolution**: Timeline view of wardrobe changes over time
+- **Carbon Footprint**: Sustainability metrics for clothing purchases
+- **Trend Analysis**: Identify your most worn brands, colors, and styles
+
+### Technical Improvements
 - **Firebase Integration**: Cloud storage for multi-device access
-- **User Authentication**: Personal accounts with secure login
-- **Social Sharing**: Share outfits with friends
-- **Price Tracking**: Monitor price changes from source links
-- **Wardrobe Statistics**: Analytics on spending, brands, categories
-- **AI Recommendations**: Smart outfit suggestions based on existing items
-- **Export/Import**: Backup and restore data as JSON
+- **User Authentication**: Secure login with Google/email
+- **Progressive Web App**: Install as mobile/desktop app
+- **Offline Mode**: Full functionality without internet
+- **Export/Import**: Backup as JSON/CSV, import from other apps
 - **Dark Mode**: Toggle between light and dark themes
-- **Multi-language**: Support for multiple languages
+- **Multi-language**: Support for international users
+- **Accessibility**: WCAG 2.1 AAA compliance
+- **Keyboard Shortcuts**: Power user navigation
+
+### Visual Enhancements
+- **Virtual Try-On**: AR visualization using device camera
+- **3D Item View**: Rotate and zoom product images
+- **Outfit Animation**: Animated transitions in outfit builder
+- **Style Quiz**: Interactive quiz to define personal style
+- **Mood Board**: Pinterest-style inspiration boards
+- **Measurement Guide**: Virtual fitting room with body measurements
+
+### Integration Ideas
+- **Calendar Integration**: Schedule outfits for specific dates/events
+- **Weather API**: Outfit suggestions based on forecast
+- **Email Parser**: Auto-add items from retailer emails
+- **Browser Extension**: Quick-add button on shopping websites
+- **Mobile App**: Native iOS/Android companion app
+- **Smart Mirror**: Connect to smart mirror devices
+- **Closet Camera**: Snap photos of existing wardrobe items
 
 ## Contributing
 

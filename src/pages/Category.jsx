@@ -1,6 +1,29 @@
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { CATEGORIES, SUBCATEGORIES } from '../utils/constants';
 
+// CategoryCard Component
+function CategoryCard({ name, imageUrl, linkTo }) {
+  return (
+    <Link
+      to={linkTo}
+      className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden hover:shadow-2xl hover:border-indigo-400 dark:hover:border-indigo-500 transition-all duration-300 group"
+    >
+      <div className="aspect-4/5 bg-gray-100 dark:bg-gray-700 overflow-hidden">
+        <img
+          src={imageUrl}
+          alt={name}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
+        />
+      </div>
+      <div className="p-5">
+        <h3 className="font-semibold text-lg text-gray-900 dark:text-white text-center group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+          {name}
+        </h3>
+      </div>
+    </Link>
+  );
+}
+
 export default function Category() {
   const { category } = useParams();
   const navigate = useNavigate();
@@ -21,36 +44,26 @@ export default function Category() {
   }
 
   return (
-    <div>
-      <div className="mb-8">
+    <div className="max-w-7xl mx-auto">
+      <div className="mb-10">
         <button
           onClick={() => navigate(-1)}
-          className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 mb-4 flex items-center"
+          className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 mb-6 flex items-center font-medium transition-colors"
         >
-          <span className="mr-2">←</span> Back
+          <span className="mr-2 text-xl">←</span> Back
         </button>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{category}</h1>
-        <p className="text-gray-600 dark:text-gray-400">Select a subcategory to browse items</p>
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">{category}</h1>
+        <p className="text-lg text-gray-600 dark:text-gray-400">Select a subcategory to browse items</p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8">
         {subcategories.map((subcategory) => (
-          <Link
+          <CategoryCard
             key={subcategory.name}
-            to={`/items?category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(subcategory.name)}`}
-            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:shadow-lg transition-shadow group"
-          >
-            <div className="aspect-square bg-gray-100 dark:bg-gray-700 overflow-hidden">
-              <img
-                src={subcategory.image}
-                alt={subcategory.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-              />
-            </div>
-            <div className="p-3">
-              <h3 className="font-medium text-gray-900 dark:text-white text-center">{subcategory.name}</h3>
-            </div>
-          </Link>
+            name={subcategory.name}
+            imageUrl={subcategory.image}
+            linkTo={`/items?category=${encodeURIComponent(category)}&subcategory=${encodeURIComponent(subcategory.name)}`}
+          />
         ))}
       </div>
     </div>
