@@ -36,6 +36,26 @@ export default function Items() {
   }, []);
 
   useEffect(() => {
+    // Seed filters from URL query params for deep-linked category/subcategory pages
+    const categoryParams = searchParams.getAll("category").filter(Boolean);
+    const subcategoryParams = searchParams
+      .getAll("subcategory")
+      .filter(Boolean);
+
+    if (categoryParams.length === 0 && subcategoryParams.length === 0) return;
+
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      categories:
+        categoryParams.length > 0 ? categoryParams : prevFilters.categories,
+      subcategories:
+        subcategoryParams.length > 0
+          ? subcategoryParams
+          : prevFilters.subcategories,
+    }));
+  }, [searchParams]);
+
+  useEffect(() => {
     applyFilters();
   }, [items, filters, searchQuery]);
 

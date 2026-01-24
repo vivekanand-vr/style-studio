@@ -81,6 +81,33 @@ export default function ItemDetail() {
 
   const imageUrl = item.thumbnail || item.image;
 
+  const attributeData = [
+    {
+      key: "type",
+      label: "Type",
+      value: item.type,
+      icon: Tag,
+      iconWrapperClass: "bg-indigo-100 dark:bg-indigo-900/30",
+      iconClass: "text-indigo-600 dark:text-indigo-400",
+    },
+    {
+      key: "color",
+      label: "Color",
+      value: item.color,
+      icon: Palette,
+      iconWrapperClass: "bg-purple-100 dark:bg-purple-900/30",
+      iconClass: "text-purple-600 dark:text-purple-400",
+    },
+    {
+      key: "size",
+      label: "Size",
+      value: item.size,
+      icon: Ruler,
+      iconWrapperClass: "bg-pink-100 dark:bg-pink-900/30",
+      iconClass: "text-pink-600 dark:text-pink-400",
+    },
+  ].filter((attr) => Boolean(attr.value));
+
   return (
     <div className="max-w-7xl mx-auto">
       {/* Back Button */}
@@ -163,15 +190,15 @@ export default function ItemDetail() {
         >
           {/* Price Section */}
           {!item.purchased && item.price && (
-            <div className="bg-linear-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl p-6 border border-indigo-100 dark:border-indigo-800">
+            <div className="bg-linear-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl p-5 border border-indigo-100 dark:border-indigo-800">
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                 Price
               </p>
               <div className="flex items-baseline gap-2">
-                <span className="text-xl font-medium text-gray-600 dark:text-gray-400">
+                <span className="text-lg font-medium text-gray-600 dark:text-gray-400">
                   {item.currency || "INR"}
                 </span>
-                <p className="text-4xl font-bold text-gray-900 dark:text-white">
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
                   {item.price}
                 </p>
               </div>
@@ -179,69 +206,42 @@ export default function ItemDetail() {
           )}
 
           {/* Attributes Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 space-y-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700 space-y-4">
             <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
               Product Details
             </h3>
 
-            {item.type && (
-              <div className="flex items-center gap-3 pb-3 border-b border-gray-100 dark:border-gray-700">
-                <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-                  <Tag
-                    className="text-indigo-600 dark:text-indigo-400"
-                    size={18}
-                  />
-                </div>
-                <div className="flex-1">
-                  <span className="text-xs text-gray-500 dark:text-gray-400 block">
-                    Type
-                  </span>
-                  <span className="text-gray-900 dark:text-white font-medium">
-                    {item.type}
-                  </span>
-                </div>
+            {attributeData.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {attributeData.map(
+                  ({
+                    key,
+                    label,
+                    value,
+                    icon: Icon,
+                    iconWrapperClass,
+                    iconClass,
+                  }) => (
+                    <div
+                      key={key}
+                      className="flex items-center gap-3 bg-gray-50 dark:bg-gray-900/40 rounded-xl p-4"
+                    >
+                      <div className={`p-2 rounded-lg ${iconWrapperClass}`}>
+                        <Icon className={iconClass} size={18} />
+                      </div>
+                      <div className="flex-1">
+                        <span className="text-xs text-gray-500 dark:text-gray-400 block">
+                          {label}
+                        </span>
+                        <span className="text-gray-900 dark:text-white font-medium">
+                          {value}
+                        </span>
+                      </div>
+                    </div>
+                  ),
+                )}
               </div>
-            )}
-
-            {item.color && (
-              <div className="flex items-center gap-3 pb-3 border-b border-gray-100 dark:border-gray-700">
-                <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                  <Palette
-                    className="text-purple-600 dark:text-purple-400"
-                    size={18}
-                  />
-                </div>
-                <div className="flex-1">
-                  <span className="text-xs text-gray-500 dark:text-gray-400 block">
-                    Color
-                  </span>
-                  <span className="text-gray-900 dark:text-white font-medium">
-                    {item.color}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {item.size && (
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-pink-100 dark:bg-pink-900/30 rounded-lg">
-                  <Ruler
-                    className="text-pink-600 dark:text-pink-400"
-                    size={18}
-                  />
-                </div>
-                <div className="flex-1">
-                  <span className="text-xs text-gray-500 dark:text-gray-400 block">
-                    Size
-                  </span>
-                  <span className="text-gray-900 dark:text-white font-medium">
-                    {item.size}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {!item.type && !item.color && !item.size && (
+            ) : (
               <p className="text-gray-500 dark:text-gray-400 text-sm">
                 No additional details available
               </p>
@@ -250,7 +250,7 @@ export default function ItemDetail() {
 
           {/* Description */}
           {item.description && (
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 border border-gray-200 dark:border-gray-700">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
                 Description
               </h3>
@@ -262,7 +262,7 @@ export default function ItemDetail() {
 
           {/* Notes */}
           {item.notes && (
-            <div className="bg-amber-50 dark:bg-amber-900/10 rounded-2xl p-6 border border-amber-200 dark:border-amber-800">
+            <div className="bg-amber-50 dark:bg-amber-900/10 rounded-2xl p-5 border border-amber-200 dark:border-amber-800">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
                 Notes
               </h3>

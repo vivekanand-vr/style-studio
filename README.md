@@ -62,7 +62,7 @@ A modern, intuitive web application for managing your wardrobe wishlist and crea
 ## Project Structure
 
 ```
-v-wardrobe/
+style-studio/
 ├── public/                    # Static assets
 ├── src/
 │   ├── assets/               # Images, icons, etc.
@@ -107,7 +107,7 @@ v-wardrobe/
 1. **Clone the repository** (or download the project):
 
    ```bash
-   cd v-wardrobe
+   cd style-studio
    ```
 
 2. **Install dependencies**:

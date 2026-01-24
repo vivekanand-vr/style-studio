@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Plus, Heart, ShoppingBag, Sparkles } from "lucide-react";
 import { getFavoriteItems, getItems, getOutfits } from "../utils/localStorage";
-import { categories } from "../utils/constants";
+import { categoriesData as categories } from "../utils/constants";
 import CategoryCard from "../components/cards/CategoryCard";
 import StatCard from "../components/cards/StatCard";
 import PageHeader from "../components/PageHeader";
