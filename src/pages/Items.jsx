@@ -150,29 +150,29 @@ export default function Items() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center"
+        className="mb-6 sm:mb-8 flex flex-col sm:flex-row gap-2 sm:gap-3 items-stretch sm:items-center"
       >
         {/* Search Bar */}
         <div className="flex-1 relative">
           <Search
             className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-            size={20}
+            size={18}
           />
           <input
             type="text"
             placeholder="Search products..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-2xl pl-10 pr-4 py-2 border-2 border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:border-indigo-400 dark:focus:border-indigo-500 focus:outline-none transition-colors"
+            className="w-full pl-10 pr-3 py-2 text-sm sm:text-base border-2 border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:border-indigo-400 dark:focus:border-indigo-500 focus:outline-none transition-colors"
           />
         </div>
 
-        <div className="flex gap-3 text-sm">
+        <div className="flex gap-2 sm:gap-3 text-sm">
           <button
             onClick={() => setIsFiltersModalOpen(true)}
-            className="relative flex-1 sm:flex-none flex items-center justify-center gap-1 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg border-2 border-gray-200 dark:border-gray-600 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors"
+            className="relative flex-1 sm:flex-none flex items-center justify-center gap-1 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-3 sm:px-4 py-2 rounded-lg border-2 border-gray-200 dark:border-gray-600 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors"
           >
-            <Filter size={18} />
+            <Filter size={16} className="sm:w-4.5 sm:h-4.5" />
             <span>Filters</span>
             {activeFiltersCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
@@ -183,10 +183,11 @@ export default function Items() {
 
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-1 sm:gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 py-2 rounded-lg transition-colors"
           >
-            <Plus size={18} strokeWidth={2.5} />
-            <span>Add Product</span>
+            <Plus size={16} className="sm:w-4.5 sm:h-4.5" strokeWidth={2.5} />
+            <span className="hidden sm:inline">Add Product</span>
+            <span className="sm:hidden">Add</span>
           </button>
         </div>
       </motion.div>
@@ -211,7 +212,7 @@ export default function Items() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+            className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6"
           >
             {filteredItems.map((item, index) => (
               <motion.div

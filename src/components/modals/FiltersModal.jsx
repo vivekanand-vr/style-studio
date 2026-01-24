@@ -92,35 +92,38 @@ export default function FiltersModal({ onClose, filters, onApplyFilters }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-6 flex justify-between items-center z-10">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <div className="sticky top-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 sm:p-6 flex justify-between items-center z-10">
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
             Filter Products
           </h2>
           <button
             onClick={handleReset}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            className="p-1.5 sm:p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           >
-            <X size={24} className="text-gray-500 dark:text-gray-400" />
+            <X
+              size={20}
+              className="sm:w-6 sm:h-6 text-gray-500 dark:text-gray-400"
+            />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-6">
+        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
           {/* Categories and Subcategories Row */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {/* Categories Multi-Select */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">
                 Categories
               </label>
               <div className="relative">
                 <button
                   type="button"
                   onClick={() => setCategoryDropdownOpen(!categoryDropdownOpen)}
-                  className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-left flex justify-between items-center hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors"
+                  className="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-left flex justify-between items-center hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors"
                 >
                   <span
                     className={
@@ -132,8 +135,8 @@ export default function FiltersModal({ onClose, filters, onApplyFilters }) {
                       : `${selectedCategories.length} selected`}
                   </span>
                   <ChevronDown
-                    size={20}
-                    className={`transition-transform ${categoryDropdownOpen ? "rotate-180" : ""}`}
+                    size={18}
+                    className={`sm:w-5 sm:h-5 transition-transform ${categoryDropdownOpen ? "rotate-180" : ""}`}
                   />
                 </button>
                 {categoryDropdownOpen && (
@@ -372,16 +375,16 @@ export default function FiltersModal({ onClose, filters, onApplyFilters }) {
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 p-6 flex gap-3">
+        <div className="sticky bottom-0 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 p-4 sm:p-6 flex gap-2 sm:gap-3">
           <button
             onClick={handleReset}
-            className="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 font-medium transition-colors"
+            className="flex-1 px-4 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 font-medium transition-colors"
           >
             Reset
           </button>
           <button
             onClick={handleApply}
-            className="flex-1 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors"
+            className="flex-1 px-4 py-2.5 sm:px-6 sm:py-3 text-sm sm:text-base bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors"
           >
             Apply Filters
           </button>

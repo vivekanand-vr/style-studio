@@ -86,14 +86,16 @@ export default function ImageZoomModal({ imageUrl, alt, onClose }) {
         className="fixed inset-0 bg-black/95 z-50 flex flex-col"
       >
         {/* Header */}
-        <div className="absolute top-0 left-0 right-0 bg-linear-to-b from-black/50 to-transparent p-6 z-10">
+        <div className="absolute top-0 left-0 right-0 bg-linear-to-b from-black/50 to-transparent p-3 sm:p-4 md:p-6 z-10">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <h3 className="text-white font-semibold text-lg">{alt}</h3>
+            <h3 className="text-white font-semibold text-sm sm:text-base lg:text-lg truncate pr-2">
+              {alt}
+            </h3>
             <button
               onClick={onClose}
-              className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors backdrop-blur-sm"
+              className="p-1.5 sm:p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors backdrop-blur-sm shrink-0"
             >
-              <X size={24} className="text-white" />
+              <X size={20} className="text-white sm:w-6 sm:h-6" />
             </button>
           </div>
         </div>
@@ -123,54 +125,56 @@ export default function ImageZoomModal({ imageUrl, alt, onClose }) {
         </div>
 
         {/* Controls */}
-        <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/50 to-transparent p-6 z-10">
-          <div className="max-w-7xl mx-auto flex items-center justify-center gap-3">
+        <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/50 to-transparent p-3 sm:p-4 md:p-6 z-10">
+          <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 sm:gap-3">
             <button
               onClick={handleZoomOut}
-              className="p-3 bg-white/10 hover:bg-white/20 rounded-lg transition-colors backdrop-blur-sm"
+              className="p-2 sm:p-3 bg-white/10 hover:bg-white/20 rounded-lg transition-colors backdrop-blur-sm"
               title="Zoom Out (-)"
             >
-              <ZoomOut size={20} className="text-white" />
+              <ZoomOut size={18} className="text-white sm:w-5 sm:h-5" />
             </button>
 
-            <div className="px-4 py-2 bg-white/10 backdrop-blur-sm rounded-lg">
-              <span className="text-white font-medium">
+            <div className="px-3 sm:px-4 py-1.5 sm:py-2 bg-white/10 backdrop-blur-sm rounded-lg">
+              <span className="text-white font-medium text-sm sm:text-base">
                 {Math.round(scale * 100)}%
               </span>
             </div>
 
             <button
               onClick={handleZoomIn}
-              className="p-3 bg-white/10 hover:bg-white/20 rounded-lg transition-colors backdrop-blur-sm"
+              className="p-2 sm:p-3 bg-white/10 hover:bg-white/20 rounded-lg transition-colors backdrop-blur-sm"
               title="Zoom In (+)"
             >
-              <ZoomIn size={20} className="text-white" />
+              <ZoomIn size={18} className="text-white sm:w-5 sm:h-5" />
             </button>
 
-            <div className="w-px h-8 bg-white/20 mx-2"></div>
+            <div className="w-px h-6 sm:h-8 bg-white/20 mx-1 sm:mx-2"></div>
 
             <button
               onClick={handleRotate}
-              className="p-3 bg-white/10 hover:bg-white/20 rounded-lg transition-colors backdrop-blur-sm"
+              className="p-2 sm:p-3 bg-white/10 hover:bg-white/20 rounded-lg transition-colors backdrop-blur-sm"
               title="Rotate (R)"
             >
-              <RotateCw size={20} className="text-white" />
+              <RotateCw size={18} className="text-white sm:w-5 sm:h-5" />
             </button>
 
             <button
               onClick={handleReset}
-              className="px-4 py-3 bg-white/10 hover:bg-white/20 rounded-lg transition-colors backdrop-blur-sm text-white font-medium text-sm"
+              className="px-3 sm:px-4 py-2 sm:py-3 bg-white/10 hover:bg-white/20 rounded-lg transition-colors backdrop-blur-sm text-white font-medium text-xs sm:text-sm"
               title="Reset (0)"
             >
-              Reset
+              <span className="hidden sm:inline">Reset</span>
+              <span className="sm:hidden">🔄</span>
             </button>
           </div>
 
-          <div className="text-center mt-4 text-white/60 text-xs">
-            <p>
+          <div className="text-center mt-3 sm:mt-4 text-white/60 text-[10px] sm:text-xs px-2">
+            <p className="hidden sm:block">
               Use mouse wheel or +/- keys to zoom • Drag to pan • R to rotate •
               0 to reset • ESC to close
             </p>
+            <p className="sm:hidden">Pinch to zoom • Drag to pan</p>
           </div>
         </div>
       </motion.div>

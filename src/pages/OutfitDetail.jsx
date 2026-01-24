@@ -74,9 +74,9 @@ export default function OutfitDetail() {
         onClick={() => navigate("/outfits")}
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
-        className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 mb-8 flex items-center gap-2 font-medium"
+        className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 mb-6 sm:mb-8 flex items-center gap-1 sm:gap-2 text-sm sm:text-base font-medium"
       >
-        <ArrowLeft size={20} />
+        <ArrowLeft size={18} className="sm:w-5 sm:h-5" />
         Back to Outfits
       </motion.button>
 
@@ -87,14 +87,14 @@ export default function OutfitDetail() {
 
       {/* Tags */}
       {(outfit.occasion || outfit.season) && (
-        <div className="flex gap-2 mb-8">
+        <div className="flex gap-2 mb-6 sm:mb-8">
           {outfit.occasion && (
-            <span className="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300 text-sm px-4 py-1.5 rounded-full font-medium">
+            <span className="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-300 text-xs sm:text-sm px-3 sm:px-4 py-1 sm:py-1.5 rounded-full font-medium">
               {outfit.occasion}
             </span>
           )}
           {outfit.season && (
-            <span className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 text-sm px-4 py-1.5 rounded-full font-medium">
+            <span className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 text-xs sm:text-sm px-3 sm:px-4 py-1 sm:py-1.5 rounded-full font-medium">
               {outfit.season}
             </span>
           )}
@@ -106,49 +106,52 @@ export default function OutfitDetail() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 mb-8"
+          className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8"
         >
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">
             Outfit Canvas
           </h2>
-          <div
-            className="relative mx-auto bg-gray-50 dark:bg-gray-900 rounded-xl overflow-hidden"
-            style={{
-              width: "800px",
-              height: "600px",
-              maxWidth: "100%",
-            }}
-          >
-            {outfit.canvas.nodes.map((node, index) => {
-              const item = items.find((i) => i.id === node.itemId);
-              if (!item) return null;
+          <div className="overflow-x-auto pb-2">
+            <div
+              className="relative bg-gray-50 dark:bg-gray-900 rounded-lg sm:rounded-xl overflow-hidden inline-block"
+              style={{
+                width: "800px",
+                height: "600px",
+                minWidth: "640px",
+                maxWidth: "100%",
+              }}
+            >
+              {outfit.canvas.nodes.map((node, index) => {
+                const item = items.find((i) => i.id === node.itemId);
+                if (!item) return null;
 
-              return (
-                <div
-                  key={index}
-                  className="absolute"
-                  style={{
-                    left: `${node.x}px`,
-                    top: `${node.y}px`,
-                    zIndex: node.z || 0,
-                  }}
-                >
-                  <div className="w-24 h-24 bg-white dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-                    {item.thumbnail ? (
-                      <img
-                        src={item.thumbnail}
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-2xl">
-                        📦
-                      </div>
-                    )}
+                return (
+                  <div
+                    key={index}
+                    className="absolute"
+                    style={{
+                      left: `${node.x}px`,
+                      top: `${node.y}px`,
+                      zIndex: node.z || 0,
+                    }}
+                  >
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-white dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 rounded-lg sm:rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+                      {item.thumbnail ? (
+                        <img
+                          src={item.thumbnail}
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-2xl">
+                          📦
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </motion.div>
       )}
@@ -159,12 +162,12 @@ export default function OutfitDetail() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">
           Products in this Outfit ({items.length})
         </h2>
         <motion.div
           layout
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
+          className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8"
         >
           <AnimatePresence>
             {items.map((item, index) => (

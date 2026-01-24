@@ -115,9 +115,9 @@ export default function ItemDetail() {
         onClick={() => navigate(-1)}
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
-        className="mb-6 flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 font-medium transition-colors"
+        className="mb-4 sm:mb-6 flex items-center gap-1 sm:gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 text-sm sm:text-base font-medium transition-colors"
       >
-        <ArrowLeft size={20} />
+        <ArrowLeft size={18} className="sm:w-5 sm:h-5" />
         <span>Back</span>
       </motion.button>
 
@@ -127,7 +127,7 @@ export default function ItemDetail() {
         subtitle={`${item.brand ? item.brand + " • " : ""}${item.category}${item.subcategory ? " / " + item.subcategory : ""}`}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
         {/* Image Section */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -135,7 +135,7 @@ export default function ItemDetail() {
           transition={{ delay: 0.1 }}
         >
           <div
-            className="relative bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl overflow-hidden mb-4 cursor-pointer group"
+            className="relative bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-xl sm:rounded-2xl overflow-hidden mb-3 sm:mb-4 cursor-pointer group"
             onClick={() => imageUrl && setIsImageZoomOpen(true)}
           >
             {imageUrl ? (
@@ -143,13 +143,14 @@ export default function ItemDetail() {
                 <img
                   src={imageUrl}
                   alt={item.title || "Product"}
-                  className="w-full h-125 object-contain transition-transform duration-300 group-hover:scale-105"
+                  className="w-full h-80 sm:h-96 lg:h-125 object-contain transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-4 py-2 rounded-full">
-                    <div className="flex items-center gap-2 text-gray-900 dark:text-white font-medium">
-                      <Search size={18} />
-                      <span>Click to zoom</span>
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full">
+                    <div className="flex items-center gap-1.5 sm:gap-2 text-gray-900 dark:text-white text-sm sm:text-base font-medium">
+                      <Search size={16} className="sm:w-4.5 sm:h-4.5" />
+                      <span className="hidden sm:inline">Click to zoom</span>
+                      <span className="sm:hidden">Zoom</span>
                     </div>
                   </div>
                 </div>
@@ -186,19 +187,19 @@ export default function ItemDetail() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="space-y-6"
+          className="space-y-4 sm:space-y-6"
         >
           {/* Price Section */}
           {!item.purchased && item.price && (
-            <div className="bg-linear-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl p-5 border border-indigo-100 dark:border-indigo-800">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+            <div className="bg-linear-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-indigo-100 dark:border-indigo-800">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1">
                 Price
               </p>
               <div className="flex items-baseline gap-2">
-                <span className="text-lg font-medium text-gray-600 dark:text-gray-400">
+                <span className="text-sm sm:text-base lg:text-lg font-medium text-gray-600 dark:text-gray-400">
                   {item.currency || "INR"}
                 </span>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
                   {item.price}
                 </p>
               </div>
@@ -206,13 +207,13 @@ export default function ItemDetail() {
           )}
 
           {/* Attributes Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700 space-y-4">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-gray-200 dark:border-gray-700 space-y-3 sm:space-y-4">
+            <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
               Product Details
             </h3>
 
             {attributeData.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                 {attributeData.map(
                   ({
                     key,
@@ -224,16 +225,18 @@ export default function ItemDetail() {
                   }) => (
                     <div
                       key={key}
-                      className="flex items-center gap-3 bg-gray-50 dark:bg-gray-900/40 rounded-xl p-4"
+                      className="flex items-center gap-2 sm:gap-3 bg-gray-50 dark:bg-gray-900/40 rounded-lg sm:rounded-xl p-3 sm:p-4"
                     >
-                      <div className={`p-2 rounded-lg ${iconWrapperClass}`}>
-                        <Icon className={iconClass} size={18} />
+                      <div
+                        className={`p-1.5 sm:p-2 rounded-lg ${iconWrapperClass}`}
+                      >
+                        <Icon className={iconClass} size={16} />
                       </div>
                       <div className="flex-1">
                         <span className="text-xs text-gray-500 dark:text-gray-400 block">
                           {label}
                         </span>
-                        <span className="text-gray-900 dark:text-white font-medium">
+                        <span className="text-sm sm:text-base text-gray-900 dark:text-white font-medium">
                           {value}
                         </span>
                       </div>
@@ -250,11 +253,11 @@ export default function ItemDetail() {
 
           {/* Description */}
           {item.description && (
-            <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
+            <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-gray-200 dark:border-gray-700">
+              <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-2 sm:mb-3">
                 Description
               </h3>
-              <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
+              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
                 {item.description}
               </p>
             </div>
@@ -262,11 +265,11 @@ export default function ItemDetail() {
 
           {/* Notes */}
           {item.notes && (
-            <div className="bg-amber-50 dark:bg-amber-900/10 rounded-2xl p-5 border border-amber-200 dark:border-amber-800">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
+            <div className="bg-amber-50 dark:bg-amber-900/10 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-amber-200 dark:border-amber-800">
+              <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white mb-2 sm:mb-3">
                 Notes
               </h3>
-              <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
+              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
                 {item.notes}
               </p>
             </div>
@@ -276,25 +279,32 @@ export default function ItemDetail() {
           <div className="flex items-center gap-2 flex-wrap">
             <button
               onClick={handleToggleFavorite}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium text-sm transition-colors ${
+              className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg font-medium text-xs sm:text-sm transition-colors ${
                 item.favorite
                   ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30"
                   : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
               }`}
             >
               <Heart
-                size={16}
-                className={item.favorite ? "fill-current" : ""}
+                size={14}
+                className={
+                  item.favorite ? "fill-current sm:w-4 sm:h-4" : "sm:w-4 sm:h-4"
+                }
               />
-              <span>{item.favorite ? "Unfavorite" : "Favorite"}</span>
+              <span className="hidden sm:inline">
+                {item.favorite ? "Unfavorite" : "Favorite"}
+              </span>
+              <span className="sm:hidden">
+                {item.favorite ? "Unfav" : "Fav"}
+              </span>
             </button>
 
             <button
               onClick={() => setIsEditModalOpen(true)}
-              className="p-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+              className="p-1.5 sm:p-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
               title="Edit Product"
             >
-              <Edit2 size={16} />
+              <Edit2 size={14} className="sm:w-4 sm:h-4" />
             </button>
 
             <button

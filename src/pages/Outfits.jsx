@@ -42,29 +42,29 @@ export default function Outfits() {
       />
 
       {/* Search and Create Button */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-8">
+      <div className="flex flex-row gap-2.5 sm:gap-4 mb-6 sm:mb-8 items-center">
         {/* Search Bar */}
         <div className="flex-1 relative">
           <Search
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
-            size={20}
+            className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+            size={18}
           />
           <input
             type="text"
             placeholder="Search outfits by name, occasion, description..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-2xl pl-12 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition-shadow"
+            className="w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2 text-sm sm:text-base border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition-shadow"
           />
         </div>
 
         {/* Create Outfit Button */}
         <button
           onClick={() => navigate("/outfits/new")}
-          className="bg-indigo-600 text-white text-sm px-4 py-1 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-1 whitespace-nowrap"
+          className="bg-indigo-600 text-white text-sm px-3 sm:px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center gap-0.5 sm:gap-2 whitespace-nowrap"
         >
-          <Plus size={20} />
-          Create Outfit
+          <Plus size={18} className="sm:w-5 sm:h-5" />
+          <span className="hidden sm:inline">Create Outfit</span>
         </button>
       </div>
 

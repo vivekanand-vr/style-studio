@@ -1,7 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Plus, Heart, ShoppingBag, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  Plus,
+  Heart,
+  ShoppingBag,
+  Sparkles,
+  Tag,
+} from "lucide-react";
 import { getFavoriteItems, getItems, getOutfits } from "../utils/localStorage";
 import { categoriesData as categories } from "../utils/constants";
 import CategoryCard from "../components/cards/CategoryCard";
@@ -11,18 +18,26 @@ import PageHeader from "../components/PageHeader";
 export default function Home() {
   const navigate = useNavigate();
   const [favoriteItems, setFavoriteItems] = useState([]);
-  const [stats, setStats] = useState({ items: 0, outfits: 0, favorites: 0 });
+  const [stats, setStats] = useState({
+    items: 0,
+    outfits: 0,
+    favorites: 0,
+    brands: 0,
+  });
 
   useEffect(() => {
     const favorites = getFavoriteItems();
     const items = getItems();
     const outfits = getOutfits();
+    const brandCount = new Set(items.map((item) => item.brand).filter(Boolean))
+      .size;
 
     setFavoriteItems(favorites);
     setStats({
       items: items.length,
       outfits: outfits.length,
       favorites: favorites.length,
+      brands: brandCount,
     });
   }, []);
 
@@ -39,7 +54,7 @@ export default function Home() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="grid grid-cols-1 sm:grid-cols-3 gap-5"
+        className="flex gap-3 sm:gap-5 w-full"
       >
         {[
           {
@@ -60,12 +75,19 @@ export default function Home() {
             value: stats.outfits,
             color: "bg-purple-50 dark:bg-gray-800",
           },
+          {
+            icon: Tag,
+            label: "Brands",
+            value: stats.brands,
+            color: "bg-amber-50 dark:bg-gray-800",
+          },
         ].map((stat, index) => (
           <motion.div
             key={stat.label}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 + index * 0.1 }}
+            className="flex-1"
           >
             <StatCard
               icon={stat.icon}
@@ -82,19 +104,19 @@ export default function Home() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="bg-linear-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-800 dark:via-gray-850 dark:to-gray-900 rounded-3xl p-8 lg:p-12 shadow-inner"
+        className="bg-linear-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-800 dark:via-gray-850 dark:to-gray-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-12 shadow-inner"
       >
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-4 sm:mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2">
               Browse by Category
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
               Discover your perfect style across our collections
             </p>
           </div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
           {categories.map((category) => (
             <CategoryCard
               key={category.name}
@@ -117,31 +139,31 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ delay: 0.5 }}
-            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 lg:p-8 transition-colors"
+            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 transition-colors"
           >
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-pink-100 dark:bg-pink-900/30 rounded-lg">
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 bg-pink-100 dark:bg-pink-900/30 rounded-lg">
                   <Heart
                     className="text-pink-600 dark:text-pink-400"
-                    size={24}
+                    size={20}
                   />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
                   Your Favorites
                 </h2>
               </div>
               {favoriteItems.length > 4 && (
                 <button
                   onClick={() => navigate("/favorites")}
-                  className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-semibold transition-colors"
+                  className="flex items-center gap-1 sm:gap-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 text-sm sm:text-base font-semibold transition-colors"
                 >
                   View All
-                  <ArrowRight size={18} />
+                  <ArrowRight size={16} className="sm:w-4.5 sm:h-4.5" />
                 </button>
               )}
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
               {favoriteItems.slice(0, 4).map((item, index) => (
                 <motion.div
                   key={item.id}
