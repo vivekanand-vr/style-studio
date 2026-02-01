@@ -1,6 +1,6 @@
-# Wardrobe Wishlist
+# Style Studio
 
-A modern, intuitive web application for managing your wardrobe wishlist and creating outfit combinations. Keep track of fashion products you want to buy, organize them by categories, and visualize complete outfits before making purchase decisions.
+A modern, intuitive web application for managing your wardrobe and creating outfit combinations. Keep track of fashion products you want to buy, organize them by categories, and visualize complete outfits before making purchase decisions.
 
 ## Features
 
