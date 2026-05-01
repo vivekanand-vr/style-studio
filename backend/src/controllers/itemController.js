@@ -2,6 +2,8 @@ const Item = require('../models/Item');
 const PriceHistory = require('../models/PriceHistory');
 const { resolveProductUrl } = require('../services/productImport');
 const { extractDominantColor } = require('../services/colorAnalysis');
+const { extractFromText: aiExtractFromText } = require('../services/aiExtract');
+const { autoCategorize } = require('../services/autoCategorize');
 
 // ── GET /items ────────────────────────────────────────────────────────────────
 async function getItems(req, res, next) {
@@ -222,6 +224,25 @@ async function importFromUrl(req, res, next) {
   }
 }
 
+// ── POST /items/extract-text ─────────────────────────────────────────────────
+async function extractFromText(req, res, next) {
+  try {
+    const { text } = req.body;
+    const extracted = await aiExtractFromText(text);
+
+    // Auto-suggest category/subcategory from the extracted title
+    if (extracted.title && !extracted.category) {
+      const { category, subcategory } = autoCategorize(extracted.title);
+      if (category) extracted.category = category;
+      if (subcategory) extracted.subcategory = subcategory;
+    }
+
+    res.json(extracted);
+  } catch (err) {
+    next(err);
+  }
+}
+
 // ── POST /items/bulk (migration from localStorage) ────────────────────────────
 async function bulkCreate(req, res, next) {
   try {
@@ -246,5 +267,6 @@ module.exports = {
   togglePurchased,
   toggleFavorite,
   importFromUrl,
+  extractFromText,
   bulkCreate,
 };

@@ -25,6 +25,14 @@ router.post(
   c.importFromUrl
 );
 
+// ── AI text extraction (user pastes raw product page text) ───────────────────
+router.post(
+  '/extract-text',
+  body('text').trim().notEmpty().withMessage('text is required'),
+  validate,
+  c.extractFromText
+);
+
 // ── Bulk migration (from localStorage) ───────────────────────────────────────
 router.post('/bulk', c.bulkCreate);
 
