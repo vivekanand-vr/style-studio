@@ -1,36 +1,25 @@
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart } from "lucide-react";
-import {
-  getFavoriteItems,
-  togglePurchased,
-  toggleFavorite,
-} from "../utils/localStorage";
+import { useItems } from "../hooks/useItems";
 import ItemCard from "../components/cards/ItemCard";
 import PageHeader from "../components/PageHeader";
 
 export default function Favorites() {
   const navigate = useNavigate();
-  const [favoriteItems, setFavoriteItems] = useState([]);
+  const { items: favoriteItems, toggleBought, toggleFav, refresh } = useItems({
+    favorite: "true",
+    limit: 200,
+  });
 
-  useEffect(() => {
-    loadFavorites();
-  }, []);
-
-  const loadFavorites = () => {
-    const favorites = getFavoriteItems();
-    setFavoriteItems(favorites);
+  const handleTogglePurchased = async (id) => {
+    await toggleBought(id);
   };
 
-  const handleTogglePurchased = (id) => {
-    togglePurchased(id);
-    loadFavorites();
-  };
-
-  const handleToggleFavorite = (id) => {
-    toggleFavorite(id);
-    loadFavorites();
+  const handleToggleFavorite = async (id) => {
+    await toggleFav(id);
+    // Re-fetch so un-favorited items disappear from this list
+    refresh();
   };
 
   return (
@@ -79,7 +68,7 @@ export default function Favorites() {
           >
             {favoriteItems.map((item, index) => (
               <motion.div
-                key={item.id}
+                key={item._id || item.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05, duration: 0.3 }}
@@ -88,7 +77,7 @@ export default function Favorites() {
                   item={item}
                   onTogglePurchased={handleTogglePurchased}
                   onToggleFavorite={handleToggleFavorite}
-                  onClick={() => navigate(`/items/${item.id}`)}
+                  onClick={() => navigate(`/items/${item._id || item.id}`)}
                 />
               </motion.div>
             ))}

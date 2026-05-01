@@ -4,7 +4,6 @@ import { ChevronDown, Trash2, X } from "lucide-react";
 import html2canvas from "html2canvas";
 import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
-import { saveOutfit } from "../utils/localStorage";
 import { OCCASIONS, SEASONS } from "../utils/constants";
 import PageHeader from "./PageHeader";
 
@@ -12,7 +11,7 @@ import PageHeader from "./PageHeader";
 function SidebarItem({ item }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
-      id: `sidebar-${item.id}`,
+      id: `sidebar-${item._id || item.id}`,
     });
 
   const style = {
@@ -205,12 +204,12 @@ export default function OutfitBuilder({ items, editOutfit, onSave, onCancel }) {
     // Check if it's a sidebar item (string starts with 'sidebar-')
     if (typeof id === "string" && id.startsWith("sidebar-")) {
       const itemId = id.replace("sidebar-", "");
-      const item = items.find((i) => i.id === itemId);
+      const item = items.find((i) => (i._id || i.id) === itemId);
 
       if (!item) return;
 
       // Check if item is already on canvas
-      if (!canvasItems.find((ci) => ci.item.id === item.id)) {
+      if (!canvasItems.find((ci) => (ci.item._id || ci.item.id) === (item._id || item.id))) {
         const canvas = canvasRef.current;
         const rect = canvas.getBoundingClientRect();
 
@@ -295,16 +294,15 @@ export default function OutfitBuilder({ items, editOutfit, onSave, onCancel }) {
     }
 
     const outfitData = {
-      ...(editOutfit && { id: editOutfit.id, createdAt: editOutfit.createdAt }),
       name: outfitName,
       description: outfitDescription,
-      itemIds: canvasItems.map((ci) => ci.item.id),
+      itemIds: canvasItems.map((ci) => ci.item._id || ci.item.id),
       occasion: occasion || undefined,
       season: season || undefined,
       coverImage,
       canvas: {
         nodes: canvasItems.map((ci) => ({
-          itemId: ci.item.id,
+          itemId: ci.item._id || ci.item.id,
           x: ci.x,
           y: ci.y,
           z: ci.z,
@@ -312,8 +310,7 @@ export default function OutfitBuilder({ items, editOutfit, onSave, onCancel }) {
       },
     };
 
-    saveOutfit(outfitData);
-    onSave();
+    await onSave(outfitData);
   };
 
   return (

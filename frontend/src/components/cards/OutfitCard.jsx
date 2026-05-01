@@ -1,20 +1,21 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Edit2, Trash2 } from "lucide-react";
-import { getItemById } from "../../utils/localStorage";
 
 export default function OutfitCard({ outfit, onDelete, onEdit }) {
   const navigate = useNavigate();
-  const items =
-    outfit.itemIds?.map((id) => getItemById(id)).filter(Boolean) || [];
+  // When coming from the API, itemIds are populated Item objects
+  const items = Array.isArray(outfit.itemIds)
+    ? outfit.itemIds.filter((i) => typeof i === 'object')
+    : [];
 
   const handleCardClick = () => {
-    navigate(`/outfits/${outfit.id}`);
+    navigate(`/outfits/${outfit._id || outfit.id}`);
   };
 
   const handleDeleteClick = (e) => {
     e.stopPropagation();
-    onDelete(outfit.id);
+    onDelete(outfit._id || outfit.id);
   };
 
   const handleEditClick = (e) => {

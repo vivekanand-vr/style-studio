@@ -9,12 +9,12 @@ export default function ItemCard({
 }) {
   const handlePurchaseClick = (e) => {
     e.stopPropagation();
-    onTogglePurchased(item.id);
+    onTogglePurchased(item._id || item.id);
   };
 
   const handleFavoriteClick = (e) => {
     e.stopPropagation();
-    onToggleFavorite(item.id);
+    onToggleFavorite(item._id || item.id);
   };
 
   const handleLinkClick = (e) => {

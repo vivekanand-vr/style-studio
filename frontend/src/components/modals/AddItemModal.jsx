@@ -15,6 +15,7 @@ export default function AddItemModal({
   initialCategory,
   initialSubcategory,
   editItem,
+  onSave,
 }) {
   const [formData, setFormData] = useState(
     editItem || {
@@ -94,7 +95,7 @@ export default function AddItemModal({
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Extract domain from source link
@@ -103,7 +104,7 @@ export default function AddItemModal({
       try {
         const url = new URL(formData.sourceLink);
         sourceDomain = url.hostname.replace("www.", "");
-      } catch (e) {
+      } catch (_) {
         // Invalid URL, ignore
       }
     }
@@ -115,7 +116,11 @@ export default function AddItemModal({
       thumbnail: formData.image || "",
     };
 
-    saveItem(itemData);
+    if (onSave) {
+      await onSave(itemData);
+    } else {
+      saveItem(itemData);
+    }
     onItemAdded();
   };
 

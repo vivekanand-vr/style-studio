@@ -1,37 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Plus, Sparkles } from "lucide-react";
-import { getOutfits, deleteOutfit, searchOutfits } from "../utils/localStorage";
+import { searchOutfits } from "../utils/localStorage";
+import { useOutfits } from "../hooks/useOutfits";
 import OutfitCard from "../components/cards/OutfitCard";
 import PageHeader from "../components/PageHeader";
 import EmptyState from "../components/EmptyState";
 
 export default function Outfits() {
   const navigate = useNavigate();
-  const [outfits, setOutfits] = useState([]);
+  const { outfits, remove } = useOutfits({ limit: 200 });
   const [searchQuery, setSearchQuery] = useState("");
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = () => {
-    setOutfits(getOutfits());
-  };
-
-  const handleDeleteOutfit = (id) => {
+  const handleDeleteOutfit = async (id) => {
     if (window.confirm("Are you sure you want to delete this outfit?")) {
-      deleteOutfit(id);
-      loadData();
+      await remove(id);
     }
   };
 
   const handleEditOutfit = (outfit) => {
-    navigate(`/outfits/edit/${outfit.id}`);
+    navigate(`/outfits/edit/${outfit._id || outfit.id}`);
   };
 
-  // Filter outfits based on search query
+  // Client-side search on the already-fetched list
   const filteredOutfits = searchOutfits(outfits, searchQuery);
 
   return (

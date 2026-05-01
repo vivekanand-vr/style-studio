@@ -1,13 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Filter, Search, Package } from "lucide-react";
-import {
-  getItems,
-  togglePurchased,
-  toggleFavorite,
-  searchItems,
-} from "../utils/localStorage";
+import { searchItems } from "../utils/localStorage";
+import { useItems } from "../hooks/useItems";
 import ItemCard from "../components/cards/ItemCard";
 import AddItemModal from "../components/modals/AddItemModal";
 import FiltersModal from "../components/modals/FiltersModal";
@@ -17,8 +13,6 @@ import EmptyState from "../components/EmptyState";
 export default function Items() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [items, setItems] = useState([]);
-  const [filteredItems, setFilteredItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
@@ -31,12 +25,10 @@ export default function Items() {
     showPurchased: true,
   });
 
-  useEffect(() => {
-    loadItems();
-  }, []);
+  const { items, loading, create, toggleBought, toggleFav } = useItems({ limit: 500 });
 
+  // Seed filters from URL query params for deep-linked category/subcategory pages
   useEffect(() => {
-    // Seed filters from URL query params for deep-linked category/subcategory pages
     const categoryParams = searchParams.getAll("category").filter(Boolean);
     const subcategoryParams = searchParams
       .getAll("subcategory")
@@ -55,43 +47,30 @@ export default function Items() {
     }));
   }, [searchParams]);
 
-  useEffect(() => {
-    applyFilters();
-  }, [items, filters, searchQuery]);
-
-  const loadItems = () => {
-    const allItems = getItems();
-    setItems(allItems);
-  };
-
-  const applyFilters = () => {
+  // Client-side filtering on top of the full items list from the API
+  const filteredItems = useMemo(() => {
     let filtered = [...items];
 
-    // Search filter
     if (searchQuery) {
       filtered = searchItems(filtered, searchQuery);
     }
 
-    // Category filter
     if (filters.categories && filters.categories.length > 0) {
       filtered = filtered.filter((item) =>
         filters.categories.includes(item.category),
       );
     }
 
-    // Subcategory filter
     if (filters.subcategories && filters.subcategories.length > 0) {
       filtered = filtered.filter((item) =>
         filters.subcategories.includes(item.subcategory),
       );
     }
 
-    // Brands filter
     if (filters.brands && filters.brands.length > 0) {
       filtered = filtered.filter((item) => filters.brands.includes(item.brand));
     }
 
-    // Price range filter
     if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
       filtered = filtered.filter((item) => {
         if (item.price === null || item.price === undefined) return false;
@@ -104,22 +83,19 @@ export default function Items() {
       });
     }
 
-    // Purchased filter
     if (!filters.showPurchased) {
       filtered = filtered.filter((item) => !item.purchased);
     }
 
-    setFilteredItems(filtered);
+    return filtered;
+  }, [items, filters, searchQuery]);
+
+  const handleTogglePurchased = async (id) => {
+    await toggleBought(id);
   };
 
-  const handleTogglePurchased = (id) => {
-    togglePurchased(id);
-    loadItems();
-  };
-
-  const handleToggleFavorite = (id) => {
-    toggleFavorite(id);
-    loadItems();
+  const handleToggleFavorite = async (id) => {
+    await toggleFav(id);
   };
 
   const handleApplyFilters = (newFilters) => {
@@ -127,7 +103,6 @@ export default function Items() {
   };
 
   const handleItemAdded = () => {
-    loadItems();
     setIsAddModalOpen(false);
   };
 
@@ -216,7 +191,7 @@ export default function Items() {
           >
             {filteredItems.map((item, index) => (
               <motion.div
-                key={item.id}
+                key={item._id || item.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05, duration: 0.3 }}
@@ -225,7 +200,7 @@ export default function Items() {
                   item={item}
                   onTogglePurchased={handleTogglePurchased}
                   onToggleFavorite={handleToggleFavorite}
-                  onClick={() => navigate(`/items/${item.id}`)}
+                  onClick={() => navigate(`/items/${item._id || item.id}`)}
                 />
               </motion.div>
             ))}
@@ -239,6 +214,7 @@ export default function Items() {
           <AddItemModal
             onClose={() => setIsAddModalOpen(false)}
             onItemAdded={handleItemAdded}
+            onSave={create}
           />
         )}
 

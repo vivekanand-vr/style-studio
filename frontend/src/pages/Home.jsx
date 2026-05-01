@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Heart, ShoppingBag, Sparkles, Tag } from "lucide-react";
-import { getFavoriteItems, getItems, getOutfits } from "../utils/localStorage";
+import { useItems } from "../hooks/useItems";
+import { useOutfits } from "../hooks/useOutfits";
 import { CATEGORIES_DATA, DASHBOARD_STATS } from "../utils/constants";
 import CategoryCard from "../components/cards/CategoryCard";
 import StatCard from "../components/cards/StatCard";
@@ -10,29 +11,27 @@ import PageHeader from "../components/PageHeader";
 
 export default function Home() {
   const navigate = useNavigate();
-  const [favoriteItems, setFavoriteItems] = useState([]);
-  const [stats, setStats] = useState({
-    items: 0,
-    outfits: 0,
-    favorites: 0,
-    brands: 0,
-  });
 
-  useEffect(() => {
-    const favorites = getFavoriteItems();
-    const items = getItems();
-    const outfits = getOutfits();
-    const brandCount = new Set(items.map((item) => item.brand).filter(Boolean))
-      .size;
+  // Fetch enough items to compute brand count and show favorites
+  const { items: allItems, total: itemsTotal } = useItems({ limit: 200 });
+  const { total: outfitsTotal } = useOutfits({ limit: 1 });
 
-    setFavoriteItems(favorites);
-    setStats({
-      items: items.length,
-      outfits: outfits.length,
-      favorites: favorites.length,
-      brands: brandCount,
-    });
-  }, []);
+  const favoriteItems = useMemo(
+    () => allItems.filter((i) => i.favorite),
+    [allItems],
+  );
+
+  const brandCount = useMemo(
+    () => new Set(allItems.map((i) => i.brand).filter(Boolean)).size,
+    [allItems],
+  );
+
+  const stats = {
+    items: itemsTotal,
+    outfits: outfitsTotal,
+    favorites: favoriteItems.length,
+    brands: brandCount,
+  };
 
   const statIcons = {
     ShoppingBag,
@@ -145,11 +144,11 @@ export default function Home() {
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
               {favoriteItems.slice(0, 4).map((item, index) => (
                 <motion.div
-                  key={item.id}
+                  key={item._id || item.id}
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.6 + index * 0.1 }}
-                  onClick={() => navigate(`/items/${item.id}`)}
+                  onClick={() => navigate(`/items/${item._id || item.id}`)}
                   className="bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-xl overflow-hidden hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer group"
                 >
                   <div className="aspect-square bg-gray-100 dark:bg-gray-600 flex items-center justify-center overflow-hidden">

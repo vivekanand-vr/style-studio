@@ -1,55 +1,34 @@
-import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Edit2, Trash2, Calendar, Clock } from "lucide-react";
-import {
-  getOutfitById,
-  getItemById,
-  deleteOutfit,
-  togglePurchased,
-  toggleFavorite,
-} from "../utils/localStorage";
+import { useOutfit } from "../hooks/useOutfit";
+import { togglePurchased as apiTogglePurchased, toggleFavorite as apiToggleFavorite } from "../api/items";
 import PageHeader from "../components/PageHeader";
 import ItemCard from "../components/cards/ItemCard";
 
 export default function OutfitDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [outfit, setOutfit] = useState(null);
-  const [items, setItems] = useState([]);
+  const { outfit, loading, remove, refresh } = useOutfit(id);
 
-  useEffect(() => {
-    loadOutfit();
-  }, [id]);
+  // itemIds are populated Item objects by the backend
+  const items = outfit?.itemIds || [];
 
-  const loadOutfit = () => {
-    const outfitData = getOutfitById(id);
-    if (outfitData) {
-      setOutfit(outfitData);
-      const outfitItems = outfitData.itemIds
-        .map((itemId) => getItemById(itemId))
-        .filter(Boolean);
-      setItems(outfitItems);
-    } else {
-      navigate("/outfits");
-    }
-  };
-
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this outfit?")) {
-      deleteOutfit(id);
+      await remove();
       navigate("/outfits");
     }
   };
 
-  const handleTogglePurchased = (itemId) => {
-    togglePurchased(itemId);
-    loadOutfit();
+  const handleTogglePurchased = async (itemId) => {
+    await apiTogglePurchased(itemId);
+    refresh();
   };
 
-  const handleToggleFavorite = (itemId) => {
-    toggleFavorite(itemId);
-    loadOutfit();
+  const handleToggleFavorite = async (itemId) => {
+    await apiToggleFavorite(itemId);
+    refresh();
   };
 
   const handleItemClick = (itemId) => {
@@ -57,16 +36,18 @@ export default function OutfitDetail() {
   };
 
   const handleEdit = () => {
-    navigate(`/outfits/edit/${outfit.id}`);
+    navigate(`/outfits/edit/${outfit._id || outfit.id}`);
   };
 
-  if (!outfit) {
+  if (loading) {
     return (
       <div className="text-center py-12">
         <p className="text-gray-500 dark:text-gray-400">Loading...</p>
       </div>
     );
   }
+
+  if (!outfit) return null;
 
   return (
     <div>
@@ -122,7 +103,9 @@ export default function OutfitDetail() {
               }}
             >
               {outfit.canvas.nodes.map((node, index) => {
-                const item = items.find((i) => i.id === node.itemId);
+                const item = items.find(
+                  (i) => (i._id || i.id) === node.itemId,
+                );
                 if (!item) return null;
 
                 return (
@@ -172,7 +155,7 @@ export default function OutfitDetail() {
           <AnimatePresence>
             {items.map((item, index) => (
               <motion.div
-                key={item.id}
+                key={item._id || item.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9 }}
@@ -182,7 +165,7 @@ export default function OutfitDetail() {
                   item={item}
                   onTogglePurchased={handleTogglePurchased}
                   onToggleFavorite={handleToggleFavorite}
-                  onClick={() => handleItemClick(item.id)}
+                  onClick={() => handleItemClick(item._id || item.id)}
                 />
               </motion.div>
             ))}

@@ -1,32 +1,24 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
-import { getItems, getOutfitById } from "../utils/localStorage";
+import { useNavigate, useParams } from "react-router-dom";
+import { useItems } from "../hooks/useItems";
+import { useOutfit } from "../hooks/useOutfit";
+import { useOutfits } from "../hooks/useOutfits";
 import OutfitBuilder from "../components/OutfitBuilder";
 
 export default function OutfitEditor() {
   const navigate = useNavigate();
-  const location = useLocation();
   const { id } = useParams();
-  const [items, setItems] = useState([]);
-  const [editingOutfit, setEditingOutfit] = useState(null);
 
-  useEffect(() => {
-    setItems(getItems());
+  const { items } = useItems({ limit: 500 });
+  // Loads existing outfit when editing; returns null outfit when id is undefined (new)
+  const { outfit: editingOutfit } = useOutfit(id);
+  const { create, update } = useOutfits({ limit: 1 });
 
-    // Check if editing existing outfit
-    if (id) {
-      const outfit = getOutfitById(id);
-      if (outfit) {
-        setEditingOutfit(outfit);
-      } else {
-        navigate("/outfits");
-      }
-    } else if (location.state?.editOutfit) {
-      setEditingOutfit(location.state.editOutfit);
+  const handleSave = async (outfitData) => {
+    if (editingOutfit?._id || editingOutfit?.id) {
+      await update(editingOutfit._id || editingOutfit.id, outfitData);
+    } else {
+      await create(outfitData);
     }
-  }, [id, location.state, navigate]);
-
-  const handleSave = () => {
     navigate("/outfits");
   };
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -16,12 +16,7 @@ import {
   Search,
   Info,
 } from "lucide-react";
-import {
-  getItemById,
-  togglePurchased,
-  toggleFavorite,
-  deleteItem,
-} from "../utils/localStorage";
+import { useItem } from "../hooks/useItem";
 import AddItemModal from "../components/modals/AddItemModal";
 import PageHeader from "../components/PageHeader";
 import ImageZoomModal from "../components/modals/ImageZoomModal";
@@ -29,46 +24,30 @@ import ImageZoomModal from "../components/modals/ImageZoomModal";
 export default function ItemDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [item, setItem] = useState(null);
+  const { item, loading, update, remove, toggleBought, toggleFav } = useItem(id);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isImageZoomOpen, setIsImageZoomOpen] = useState(false);
 
-  useEffect(() => {
-    loadItem();
-  }, [id]);
-
-  const loadItem = () => {
-    const itemData = getItemById(id);
-    if (itemData) {
-      setItem(itemData);
-    } else {
-      navigate("/items");
-    }
+  const handleTogglePurchased = async () => {
+    await toggleBought();
   };
 
-  const handleTogglePurchased = () => {
-    togglePurchased(id);
-    loadItem();
+  const handleToggleFavorite = async () => {
+    await toggleFav();
   };
 
-  const handleToggleFavorite = () => {
-    toggleFavorite(id);
-    loadItem();
-  };
-
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete this item?")) {
-      deleteItem(id);
+      await remove();
       navigate("/items");
     }
   };
 
   const handleItemUpdated = () => {
-    loadItem();
     setIsEditModalOpen(false);
   };
 
-  if (!item) {
+  if (loading) {
     return (
       <div className="text-center py-20">
         <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full mb-4">
@@ -78,6 +57,8 @@ export default function ItemDetail() {
       </div>
     );
   }
+
+  if (!item) return null;
 
   const imageUrl = item.thumbnail || item.image;
 
@@ -365,6 +346,7 @@ export default function ItemDetail() {
             editItem={item}
             onClose={() => setIsEditModalOpen(false)}
             onItemAdded={handleItemUpdated}
+            onSave={update}
           />
         )}
 
